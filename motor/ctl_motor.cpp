@@ -176,11 +176,12 @@ void* read_signal(void* arg)
 
 	while(1){
 	read(fd,&n,1);
-//	printf("\n	ABC singal is:  %1d_%1d_%1d",n&0x01,(n>>1)&0x01,(n>>2)&0x01);
+	printf("\n	ABC singal is:  %1d_%1d_%1d",n&0x01,(n>>1)&0x01,(n>>2)&0x01);
 	}
 }
 int motorReset(void) //reset motor 
 {
+	int flag[3] = {0};
 	int i;
 	    fd = open("/dev/motor", O_RDWR); //open dev file
 	    if (fd < 0) {
@@ -206,19 +207,19 @@ int motorReset(void) //reset motor
 	sleep(1);
 	while(n)
 	{
-	if(n&0x01)
-	ioctl(fd,5,1);
-	if(n&0x02)
-	ioctl(fd,5,2);
-	if(n&0x04)
-	ioctl(fd,5,3);
+	if((n&0x01))
+		ioctl(fd,5,1);
+	if((n&0x02))
+		ioctl(fd,5,2);
+	if((n&0x04))
+		ioctl(fd,5,3);
 	delay(100);
 	}
 	pthread_cancel(tid); // cancel the thread
-i=2500;
-ioctl(fd,4,1);
-ioctl(fd,1,1);
-ioctl(fd,0,1);
+i=2000;
+ioctl(fd,4,0);
+ioctl(fd,1,0);
+ioctl(fd,0,0);
 
 while(i--)
 {

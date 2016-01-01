@@ -10,6 +10,7 @@
 #include <cfg_type.h>
 #include <linux/timer.h>
 //#include <stdio.h>
+#include <mach/platform.h>
 #include <linux/delay.h>
 #include <linux/hrtimer.h>
 #include <linux/jiffies.h>
@@ -32,10 +33,6 @@
 #define PWM_B_H gpio_set_value(PAD_GPIO_B+29,1) //b29
 #define PWM_B_L gpio_set_value(PAD_GPIO_B+29,0) //b29
 
-ktime_t kt;
-static struct hrtimer pwm_timer;
-static int a_value = 150; //pwm duty ratio := (a_value/2000*100%)
-static int b_value = 150; //pwm duty ratio := (b_value/2000*100%)
 //定义高低电平
 const int high = 1;
 const int low = 0;
@@ -87,36 +84,6 @@ static ssize_t  dev_open(struct inode *node, struct file *filp)
 	return 0;
 }
 
-/*  function  */
-static enum hrtimer_restart hrtimer_handler(struct hrtimer *timer)
-{
-	    static int count = 0;  //count -all[0,2000]  -value[60, 240]
-		count++;
-		count = count % 2000;
-		// A
-		if(count < 60 || count > 240){
-		PWM_A_L;
-		}
-		else if(count >=60 && count <= a_value){
-			PWM_A_H;
-			}
-		else{
-			PWM_A_L;
-		}
-		// B
-		if(count < 60 || count > 240){
-		PWM_B_L;
-		}
-		else if(count >=60 && count <= b_value){
-			PWM_B_H;
-			}
-		else{
-			PWM_B_L;
-		}
-hrtimer_forward(pwm_timer, pwm_timer->base->get_time(), kt);
-return HRTIMER_RESTART;
-}
-
 static long dev_ioctl(struct file *file, unsigned int cmd,unsigned long arg)
 {
 	switch(cmd)
@@ -166,14 +133,22 @@ case 3:
 case 7:
 	if(arg < 60 || arg >240)
 		break;
-	else
-		a_value = arg;
+	else{
+		PWM_A_L;
+		PWM_A_H;
+		udelay(arg * 10);
+		PWM_A_L;
+	}
 		break;
 case 8:
 	if(arg < 60 || arg >240)
 		break;
-	else
-		b_value = arg;
+	else{
+		PWM_B_L;
+		PWM_B_H;
+		udelay(arg * 10);
+		PWM_B_L;
+	}
 		break;
 default : 
 	break;
@@ -201,13 +176,6 @@ static int dev_init(void)
 
     myclass = class_create(THIS_MODULE,"motor");
     myclass_dev = device_create(myclass,NULL,devno,0,"motor");
-
-   kt = ktime_set(0, 10000); /* 0 sec, 10000 nsec */
-   hrtimer_init(&pwm_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-   //hrtimer_set_expires(&timer, kt);
-   hrtimer_start(&pwm_timer, kt, HRTIMER_MODE_REL);
-   timer.function = hrtimer_handler;
-
 	printk("<0>\n 欢迎使用motor_contral! \n"); 
 return 0;
 }  
@@ -219,7 +187,6 @@ static void dev_exit(void)
 	unregister_chrdev_region(devno,1);
 	device_unregister(myclass_dev);
 	class_destroy(myclass);
-	hrtimer_cancel(&pwm_timer);
 	gpio_free(PAD_GPIO_C+4);
     printk("<0> \n Goodbye!\n");  
 }  

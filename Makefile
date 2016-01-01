@@ -7,19 +7,22 @@ CXX=g++
 
 all: app
 app: pro_all.o $(MPATH1)photo.o $(MPATH2)init_motor.o $(MPATH2)ctl_motor.o
-	$(CXX) $(OPENCVLIB) -lpthread -o app pro_all.o $(MPATH1)photo.o $(MPATH2)init_motor.o $(MPATH2)ctl_motor.o 
+	$(CXX) -g $(OPENCVLIB) -lpthread -o app pro_all.o $(MPATH1)photo.o $(MPATH2)init_motor.o $(MPATH2)ctl_motor.o 
 pro_all.o:pro_all.cpp
-	$(CXX) -c pro_all.cpp
+	$(CXX) -g -c pro_all.cpp
 photo.o: $(OBJS)
-	$(CXX) -O  $(CFLAGS) $(OPENCVLIB) -c $(OBJS)
+	$(CXX) -g -O  $(CFLAGS) $(OPENCVLIB) -c $(OBJS)
 init_motor.o: init_motor.cpp 
-	$(CXX) -O init_motor.cpp -lm -c
+	$(CXX) -g -O init_motor.cpp -lm -c
 ctl_motor.o:ctl_motor.cpp
-	$(CXX) -O ctl_motor.cpp -lm -lpthread -c
+	$(CXX) -g -O ctl_motor.cpp -lm -lpthread -c
 clean:
 	rm -f *.o app $(MPATH1)*.o $(MPATH2)*.o
 run: app
 	./app
 kill:
 	pkill app
-
+insmod:
+	insmod Dev_driver/motor.ko
+rmmod:
+	rmmod motor

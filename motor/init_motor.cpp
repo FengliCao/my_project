@@ -32,6 +32,26 @@ p_xy->flag = 1.0;
 	pthread_attr_init(&a);
 	pthread_attr_setdetachstate(&a,PTHREAD_CREATE_DETACHED);
 	int t_arg;
+while(1)
+{
+	ioctl(fd, 7, 100);
+	delay(20000);
+	ioctl(fd, 7, 100);
+	delay(20000);
+	ioctl(fd, 8, 100);
+	delay(20000);
+	ioctl(fd, 8, 100);
+	delay(1000000);
+	ioctl(fd, 7, 220);
+	delay(20000);
+	ioctl(fd, 7, 220);
+	delay(20000);
+	ioctl(fd, 8, 220);
+	delay(20000);
+	ioctl(fd, 8, 220);
+	delay(1000000);
+
+}
 
 while(1)
 {//	usleep(10);
