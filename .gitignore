@@ -1,0 +1,18 @@
+# innore all files 
+motor/*
+photo/*
+Dev_driver/*
+
+/* file */
+*.o
+app
+
+/* */
+!*.c
+*.mod.c
+!*.cpp
+!*.h
+!Makefile
+!/.gitignore 
+
+
