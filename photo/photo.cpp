@@ -1,6 +1,7 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <stdio.h>
+#include <pthread.h>
 #include <unistd.h>
 #include "photo.h"
 #include "../m_inc.h"
@@ -20,6 +21,9 @@ static int iHighV = 255;
 
 static int thread_flag = 1; //
 Mat thread_edge;
+Mat Yimg;
+pthread_t tid;
+
 void* thread_func(void *p){
 	PointXY *p_xy = (PointXY *)p;
 	//-------------查找轮廓并拟合圆-----------------------------
@@ -79,6 +83,7 @@ int ret_pos( PointXY *p_xy){
     	if(!cap.isOpened())  // check if we succeeded
         	return -1;
  
+    	Mat edges;
 
 //  namedWindow("原始图像",CV_WINDOW_NORMAL);
 //	namedWindow("edge",CV_WINDOW_NORMAL);
@@ -94,7 +99,6 @@ for(;;){
 	Mat Yimg = srcImage.clone();
 	cvtColor(srcImage, edges, CV_BGR2HSV); //rgb to hsv
 	//hsv 二值化
-    Mat edges;
 	inRange(edges, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV),srcImage);
 
 	Mat kern = getStructuringElement(MORPH_RECT, Size(5, 5)); 
@@ -125,11 +129,11 @@ while(1){
 		usleep(10);
 }
 
+pthread_cancel(tid);
 //create a thread to calculate the picuure
 thread_edge = edge;
 thread_flag = 1;
-pthread_t tid;
-if(pthraed_create(&tid, NULL, thread_func, p_xy))
+if(pthread_create(&tid, NULL, thread_func, p_xy))
 	perror("thread create error");
 usleep(100);
 
