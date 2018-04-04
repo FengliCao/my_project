@@ -219,11 +219,11 @@ i=2500;
 ioctl(fd,4,1);
 ioctl(fd,1,1);
 ioctl(fd,0,1);
+
 while(i--)
 {
-ioctl(fd,MPul_ABC);	
+    ioctl(fd,MPul_ABC);	
 	delay(100);
-
 }
 return 1;
 }
