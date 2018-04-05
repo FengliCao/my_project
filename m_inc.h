@@ -4,6 +4,7 @@
 typedef struct _point{
 	float x;
 	float y;
+	float flag;
 }PointXY;
 
 

@@ -14,7 +14,7 @@ int main ()
 {
 	pid_t pid;
 	int shmid ;
-	shmid = shmget(0x90, 2*sizeof(float), IPC_CREAT|0666);
+	shmid = shmget(0x91, 3*sizeof(float), IPC_CREAT|0666);
 	if(shmid == -1)
 	{
 		perror("shmget error");
@@ -42,6 +42,8 @@ int main ()
 		if(sched_setaffinity(0, sizeof(mask), &mask) == -1)
 			perror("can not set cpu 4");
 		else*/
+		printf("\nChild process !\n");
+			p->flag = 0.0;
 			ret_pos( p );
 		printf("\nChild process over\n");
 		}//if

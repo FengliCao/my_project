@@ -19,7 +19,7 @@ ctl_motor.o:ctl_motor.cpp
 clean:
 	rm -f *.o app $(MPATH1)*.o $(MPATH2)*.o
 run: app
-	./app 
+	./app
 kill:
 	pkill app
 
