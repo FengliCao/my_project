@@ -13,6 +13,7 @@
 int main ()
 {
 	pid_t pid;
+
 	int shmid ;
 	shmid = shmget(0x91, 3*sizeof(float), IPC_CREAT|0666);
 	if(shmid == -1)

@@ -14,7 +14,7 @@
 #include <pthread.h> // pthread header
 static const int high = 1,low = 0;
 static struct timeval ta,tb;
-
+int tm[3];
 int fd;
 
 void delay(int n)
@@ -80,7 +80,6 @@ void search(int m[3],double p[3])
 {
 int i;
 double e[3];
-
 for(i=0;i<3;i++)
 {
 
@@ -88,22 +87,33 @@ Coordinate_calculation(i,m[i],p,&e[i]);
   if(e[i]>0)
 {
 	m[i]++;////
-	if(i==2)
- 	ioctl(fd,4,1);
-	else
-	ioctl(fd,i,1);
 }
 else if(e[i]<0)
 {
 	m[i]--;////
+
+}
+
+if(tm[i]-m[i]<-1)
+{
+	if(i==2)
+ 	ioctl(fd,4,1);
+	else
+	ioctl(fd,i,1);
+	tm[i]++;
+ioctl(fd,5,1+i);
+}
+else if (tm[i]-m[i]>1) 
+{
+
 	if(i==2)
  	ioctl(fd,4,0);
 	else
 	ioctl(fd,i,0);
-
+	tm[i]--;
+ioctl(fd,5,1+i);
 }
 }
-ioctl(fd,MPul_ABC);
 }
 void goThePoint(double targetPonit[3],double point[3],int m[3])
 	{
@@ -149,6 +159,7 @@ else
 	{
 	point[i]=targetPonit[i];
 	}
+//printf("m[i]=%d,tm[i]=%d\n ",m[i-1],tm[i-1]);
 	return ;
 	}
 	}
@@ -179,7 +190,7 @@ void* read_signal(void* arg)
 	printf("\n	ABC singal is:  %1d_%1d_%1d",n&0x01,(n>>1)&0x01,(n>>2)&0x01);
 	}
 }
-int motorReset(void) //reset motor 
+int motorReset(int m[3]) //reset motor 
 {
 	int flag[3] = {0};
 	int i;
@@ -216,7 +227,7 @@ int motorReset(void) //reset motor
 	delay(100);
 	}
 	pthread_cancel(tid); // cancel the thread
-i=2000;
+i=3000;
 ioctl(fd,4,0);
 ioctl(fd,1,0);
 ioctl(fd,0,0);
@@ -225,6 +236,10 @@ while(i--)
 {
     ioctl(fd,MPul_ABC);	
 	delay(100);
+}
+for(i=0;i<3;i++)
+{
+tm[i]=m[i];
 }
 return 1;
 }

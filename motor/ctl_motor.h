@@ -19,11 +19,11 @@
 #define l6 301.02
 #define pi 3.14159265358979323846
 #define step_cnt  64000  //stepCountForRightAngle
-#define acclerate 0.000001
-#define maxSpeed  0.03      //22650
+#define acclerate 0.000000001
+#define maxSpeed  0.001      //22650
 void delay(int n);
 void search(int m[3],double p[3]);
 void Coordinate_calculation(int id,int m,double p[3],double *e);
 void Coordinate_calculation(int id,int m,double p[3],double *e);
 void goThePoint(double targetPonit[3],double point[3],int m[3]);
-int motorReset(void);
+int motorReset(int m[3]);

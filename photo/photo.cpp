@@ -8,8 +8,8 @@
 using namespace std;
 using namespace cv;
 Point2f Centor[30];
-#define x_size (160/2)
-#define y_size (120/2)
+#define x_size (320/2)
+#define y_size (240/2)
 //草莓颜色阀值
 static int iLowH = 0;    
 static int iHighH = 15;    
@@ -49,8 +49,9 @@ for(;;){
 	Mat srcImage,Image;
 	cap >> Image; // get a new frame from camera
  
-	//flip(Image, Image,0);//镜像
-	resize(Image,srcImage,Size(Image.cols/4,Image.rows/4),0,0,INTER_AREA);
+	flip(Image, Image,1);//镜像
+	flip(Image, Image,0);//镜像
+	resize(Image,srcImage,Size(Image.cols/2,Image.rows/2),0,0,INTER_AREA);
 	Mat Yimg = srcImage.clone();
 	cvtColor(srcImage, edges, CV_BGR2HSV); //rgb to hsv
 	//hsv 二值化
@@ -82,7 +83,7 @@ for(;;){
 			break;
 		}
 		else
-			usleep(10);
+			usleep(1);
 	}//while
 
 //create a thread to calculate the picuure
@@ -99,7 +100,7 @@ else
 {
 	thread_flag = 1;
 }
-usleep(500);
+usleep(3000);
 
 if(p_xy->x != 0.0 && p_xy->y != 0.0){
 	Point2f _xy;
@@ -109,7 +110,7 @@ if(p_xy->x != 0.0 && p_xy->y != 0.0){
 }//if
 	imshow("原始图像", Yimg);
 	//imshow("处理结果", srcImage);
-        if(waitKey(1) == 'q') break;
+	if(waitKey(1) == 'q') break;
     }
     return 0;
 }
@@ -158,7 +159,7 @@ void* thread_func(void *p){
 		p_xy->x = Centor[_aim].x;
 		p_xy->y = Centor[_aim].y;
 
-		//printf("\n aim is : %f ,%f",Centor[_aim].x , Centor[_aim].y);
+//		printf("\n aim is : %f ,%f",Centor[_aim].x , Centor[_aim].y);
 		}//if
 	else{
 		p_xy->x = 0.0;
